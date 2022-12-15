@@ -1,4 +1,4 @@
-export type AnswerStatus = "CORRECT" | "INCORRECT"
+export type AnswerStatus = "CORRECT" | "INCORRECT" | "NOT_ANSWERED"
 
 export type Player = {
   id: string
@@ -12,6 +12,7 @@ export type GameStatus = "NOT_STARTED" | "STARTED" | "DONE"
 export type Game = {
   status: GameStatus
   players: Player[]
+  initialTime: Date
 }
 
 export const isGame = (data: Game | unknown): data is Game => {

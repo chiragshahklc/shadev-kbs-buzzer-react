@@ -7,6 +7,7 @@ import {
   LargeWidthInput,
   CorrectPanel,
   IncorrectPanel,
+  Panel,
 } from "./ViewGame.styled"
 import { Player } from "./components"
 import { Clock } from "../."
@@ -24,7 +25,7 @@ const ViewGame: FC = () => {
   )
 
   const inCorrectPlayers = players.filter(
-    (player) => player.answerStatus !== "CORRECT"
+    (player) => player.answerStatus === "INCORRECT"
   )
 
   // effects
@@ -47,6 +48,7 @@ const ViewGame: FC = () => {
                 if (!gameId) return
                 setRemoteId(gameId)
               }}
+              disabled={gameStatus !== "NOT_STARTED"}
             >
               Join
             </Button>
@@ -57,6 +59,16 @@ const ViewGame: FC = () => {
         </Col>
         {gameStatus !== "NOT_STARTED" && (
           <Col span={24} style={{ padding: "0 20%", textAlign: "center" }}>
+            <Panel>
+              <Row gutter={[16, 16]}>
+                <Col span={24}>
+                  <h2>Players</h2>
+                </Col>
+                {players.map((player) => (
+                  <Player key={`player_${player.id}`} player={player} />
+                ))}
+              </Row>
+            </Panel>
             <CorrectPanel>
               <Row gutter={[16, 16]}>
                 <Col span={24}>
@@ -64,7 +76,7 @@ const ViewGame: FC = () => {
                 </Col>
                 {correctPlayers.map((player) => (
                   <Player
-                    mode="correct"
+                    mode="CORRECT"
                     key={`correct_player_${player.id}`}
                     player={player}
                   />
@@ -78,7 +90,7 @@ const ViewGame: FC = () => {
                 </Col>
                 {inCorrectPlayers.map((player) => (
                   <Player
-                    mode="incorrect"
+                    mode="INCORRECT"
                     key={`incorrect_player_${player.id}`}
                     player={player}
                   />

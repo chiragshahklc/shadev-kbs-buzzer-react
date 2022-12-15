@@ -1,7 +1,13 @@
 import { useState, useEffect, useReducer, Reducer } from "react"
 import { Peer, DataConnection } from "peerjs"
 // local imports
-import { ActionKind, IAction, IState } from "./usePeer.types"
+import {
+  ActionKind,
+  IAction,
+  IState,
+  IDataType,
+  IDataKind,
+} from "./usePeer.types"
 import { Game, GameStatus, Player, isGame } from "../types"
 
 const reducer: Reducer<IState, IAction> = (state, action) => {
@@ -45,9 +51,41 @@ export default (onRemoteConnected?: () => void) => {
       const game: Game = {
         players: state.players,
         status: state.gameStatus,
+        initialTime: state.initialTime,
       }
-      conn.send(game)
+
+      const data: IDataType = {
+        type: IDataKind.SYNC,
+        payload: game,
+      }
+      conn.send(data)
     })
+  }
+
+  const onDataReceived = (data: unknown) => {
+    const d = data as IDataType
+    switch (d.type) {
+      case IDataKind.SYNC:
+        console.log(d.payload)
+        break
+      default:
+        return
+    }
+  }
+
+  const onRemoteDataReceived = (data: unknown) => {
+    const d = data as IDataType
+    switch (d.type) {
+      case IDataKind.SYNC:
+        {
+          setGameStatus(d.payload.status)
+          setPlayers(d.payload.players)
+          setInitialTime(new Date(d.payload.initialTime))
+        }
+        break
+      default:
+        return
+    }
   }
 
   const setRemoteId = (remoteId: string) =>
@@ -79,10 +117,7 @@ export default (onRemoteConnected?: () => void) => {
     availablePeer.on("connection", (conn) => {
       console.log("Peer connected!")
 
-      conn.on("data", (data) => {
-        if (isGame(data)) console.log({ data })
-        else console.error(data)
-      })
+      conn.on("data", onDataReceived)
 
       setConnections((old) => [...old, conn])
     })
@@ -105,12 +140,7 @@ export default (onRemoteConnected?: () => void) => {
       remote.send("Bonjour!")
     })
 
-    remote.on("data", (data) => {
-      if (isGame(data)) {
-        setGameStatus(data.status)
-        setPlayers(data.players)
-      } else console.error(data)
-    })
+    remote.on("data", onRemoteDataReceived)
 
     remote.on("error", (e) => {
       console.log(e)
@@ -132,5 +162,6 @@ export default (onRemoteConnected?: () => void) => {
     setPlayers,
     setInitialTime,
     syncGame,
+    connections,
   }
 }

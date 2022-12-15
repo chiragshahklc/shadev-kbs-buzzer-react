@@ -11,3 +11,7 @@ export const IncorrectSpan = styled.span`
   color: red;
   text-shadow: 1px 1px 2px #bc9696;
 `
+
+export const StyledSpan = styled.span`
+  font-size: 40px;
+`

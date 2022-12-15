@@ -1,4 +1,4 @@
-import { GameStatus, Player } from "../types"
+import { GameStatus, Player, Game } from "../types"
 
 export enum ActionKind {
   SET_PEER_ID = "SET_PEER_ID",
@@ -22,3 +22,10 @@ export type IAction =
   | { type: ActionKind.SET_GAME_STATUS; payload: GameStatus }
   | { type: ActionKind.SET_PLAYERS; payload: Player[] }
   | { type: ActionKind.SET_INITIAL_TIME; payload: Date }
+
+export enum IDataKind {
+  GAME_STARTED = "game-started",
+  SYNC = "sync",
+}
+
+export type IDataType = { type: IDataKind.SYNC; payload: Game }

@@ -1,16 +1,16 @@
 import { FC } from "react"
 import { Col } from "antd"
 // local imports
-import { Player } from "../../../../types"
-import { CorrectSpan, IncorrectSpan } from "./Player.styled"
+import { Player, AnswerStatus } from "../../../../types"
+import { CorrectSpan, IncorrectSpan, StyledSpan } from "./Player.styled"
 
 type PlayerComponentProps = {
   player: Player
-  mode?: "correct" | "incorrect"
+  mode?: AnswerStatus
 }
 
 const PlayerComponent: FC<PlayerComponentProps> = ({ player, mode }) => {
-  if (mode === "correct")
+  if (mode === "CORRECT")
     return (
       <>
         <Col key={`cp_name_${player.id}`} span={12}>
@@ -22,20 +22,29 @@ const PlayerComponent: FC<PlayerComponentProps> = ({ player, mode }) => {
       </>
     )
 
+  if (mode === "INCORRECT")
+    return (
+      <>
+        <Col key={`incp_name_${player.id}`} span={12}>
+          <IncorrectSpan>{player.name || player.id}</IncorrectSpan>
+        </Col>
+        <Col key={`incp_time_${player.id}`} span={12}>
+          <IncorrectSpan>{player.time}s</IncorrectSpan>
+        </Col>
+      </>
+    )
+
   return (
     <>
-      <Col key={`incp_name_${player.id}`} span={12}>
-        <IncorrectSpan>{player.name || player.id}</IncorrectSpan>
-      </Col>
-      <Col key={`incp_time_${player.id}`} span={12}>
-        <IncorrectSpan>{player.time}s</IncorrectSpan>
+      <Col key={`incp_name_${player.id}`} span={24}>
+        <StyledSpan>{player.name || player.id}</StyledSpan>
       </Col>
     </>
   )
 }
 
 PlayerComponent.defaultProps = {
-  mode: "incorrect",
+  mode: "NOT_ANSWERED",
 }
 
 PlayerComponent.displayName = "Player"
