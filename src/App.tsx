@@ -14,8 +14,9 @@ import {
 import { CopyOutlined, SyncOutlined } from "@ant-design/icons"
 // local imports
 import { Container } from "./components/common"
-import { Player, GameStatus } from "./types"
+import { Player, GameStatus, Game } from "./types"
 import usePeer from "./hooks/usePeer"
+import { Clock } from "./components"
 
 const ROW_GUTTER: [number, number] = [16, 16]
 const totalPlayersOptions: CheckboxOptionType[] = new Array(10)
@@ -24,13 +25,24 @@ const totalPlayersOptions: CheckboxOptionType[] = new Array(10)
   .map((item) => ({ label: item, value: item }))
 
 const App = () => {
+  const {
+    peerId,
+    syncGame,
+    players,
+    setPlayers,
+    gameStatus,
+    setGameStatus,
+    initialTime,
+    setInitialTime,
+  } = usePeer()
+
+  // states
   const [totalPlayers, setTotalPlayers] = useState(0)
-  const [players, setPlayers] = useState<Player[]>([])
-  const [initialTime, setInitialTime] = useState(new Date())
-  const [time, setTime] = useState<Date>(new Date())
+  // const [players, setPlayers] = useState<Player[]>([])
+  // const [initialTime, setInitialTime] = useState(new Date())
+  // const [time, setTime] = useState<Date>(new Date())
   const [donePlayers, setDonePlayers] = useState<string[]>([])
-  const [gameStatus, setGameStatus] = useState<GameStatus>("NOT_STARTED")
-  const { peerId, sendMessage } = usePeer()
+  // const [gameStatus, setGameStatus] = useState<GameStatus>("NOT_STARTED")
 
   const onNewGameClick = () => {
     setPlayers([])
@@ -54,42 +66,11 @@ const App = () => {
   const onStartClick = () => {
     setGameStatus("STARTED")
     setInitialTime(new Date(new Date().getTime() + 6000))
-    // const checkboxOptions: CheckboxOptionType[] = []
-
-    // players.forEach((player) => {
-    //   checkboxOptions.push({
-    //     label: player.name || player.id,
-    //     value: player.id,
-    //   })
-    // })
   }
 
-  const onSyncClick = () => {
-    sendMessage({
-      gameStatus,
-      players,
-    })
-  }
+  const onSyncClick = () => syncGame()
 
   // effects
-  useEffect(() => {
-    let timer: number
-    if (gameStatus === "STARTED") {
-      // setInitialTime(new Date(new Date().getTime() + 6000))
-      timer = setInterval(() => {
-        const t = new Date()
-        const diff = (initialTime.getTime() - t.getTime()) / 1000
-        console.log(diff)
-
-        if (diff <= 0.1) clearInterval(timer)
-        setTime(t)
-      }, 1)
-    }
-
-    return () => {
-      if (timer) clearInterval(timer)
-    }
-  }, [initialTime, gameStatus])
 
   return (
     <Container>
@@ -110,12 +91,7 @@ const App = () => {
         </Space>
       )}
       {gameStatus === "STARTED" && (
-        <h2>
-          <span>Clock:</span>&nbsp;
-          {(initialTime.getTime() - time.getTime()) / 1000 > 0.1
-            ? (initialTime.getTime() - time.getTime()) / 1000
-            : 0}
-        </h2>
+        <Clock initialTime={initialTime} gameStatus={gameStatus} />
       )}
       <Row gutter={ROW_GUTTER}>
         <Col span={24}>
@@ -209,11 +185,11 @@ const App = () => {
                           player.answerStatus === "CORRECT" ? "green" : "red",
                       }}
                     >
-                      {player.name || player.id}: {player.time}
-                    </div>
-                    <div>
                       <Space>
                         <Button
+                          style={{
+                            background: "green",
+                          }}
                           onClick={() => {
                             setPlayers(
                               [...players].map((p) => {
@@ -227,9 +203,12 @@ const App = () => {
                             )
                           }}
                         >
-                          Correct
+                          &nbsp;
                         </Button>
                         <Button
+                          style={{
+                            background: "red",
+                          }}
                           onClick={() => {
                             setPlayers(
                               [...players].map((p) => {
@@ -243,8 +222,11 @@ const App = () => {
                             )
                           }}
                         >
-                          Incorrect
+                          &nbsp;
                         </Button>
+                        <div>
+                          {player.name || player.id}: {player.time}
+                        </div>
                       </Space>
                     </div>
                   </li>

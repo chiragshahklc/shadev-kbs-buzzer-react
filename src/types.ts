@@ -8,3 +8,14 @@ export type Player = {
 }
 
 export type GameStatus = "NOT_STARTED" | "STARTED" | "DONE"
+
+export type Game = {
+  status: GameStatus
+  players: Player[]
+}
+
+export const isGame = (data: Game | unknown): data is Game => {
+  return (
+    (data as Game).players !== undefined && (data as Game).status !== undefined
+  )
+}

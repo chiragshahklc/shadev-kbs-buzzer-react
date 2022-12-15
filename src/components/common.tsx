@@ -6,4 +6,23 @@ const Container = styled.div`
   min-height: 100vh;
 `
 
-export { Container }
+const CenterColDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
+
+const ClockContainer = styled.div`
+  border: 1px solid black;
+  padding: 80px;
+  border-radius: 50%;
+  max-height: 56px;
+  max-width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+`
+
+export { Container, CenterColDiv, ClockContainer }

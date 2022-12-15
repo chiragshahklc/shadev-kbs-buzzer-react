@@ -1,4 +1,5 @@
 import ViewGame from "./ViewGame"
 import Home from "./Home"
+import Clock from "./Clock"
 
-export { Home, ViewGame }
+export { Home, ViewGame, Clock }
