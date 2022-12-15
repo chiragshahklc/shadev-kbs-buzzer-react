@@ -34,6 +34,7 @@ const App = () => {
     setGameStatus,
     initialTime,
     setInitialTime,
+    connections,
   } = usePeer()
 
   // states
@@ -58,6 +59,7 @@ const App = () => {
       players.push({
         id: `PLAYER_${i + 1}`,
         name: "",
+        answerStatus: "NOT_ANSWERED",
       })
     }
     setPlayers(players)
@@ -90,10 +92,25 @@ const App = () => {
           <Button icon={<SyncOutlined />} onClick={onSyncClick} />
         </Space>
       )}
-      {gameStatus === "STARTED" && (
-        <Clock initialTime={initialTime} gameStatus={gameStatus} />
-      )}
+
       <Row gutter={ROW_GUTTER}>
+        {connections.length ? (
+          <Col span={24}>
+            <h2>Connections</h2>
+            <ul>
+              {connections.map((con) => (
+                <li key={`connection_${con.connectionId}`}>
+                  {con.connectionId}
+                </li>
+              ))}
+            </ul>
+          </Col>
+        ) : null}
+        {gameStatus === "STARTED" && (
+          <Col span={24}>
+            <Clock initialTime={initialTime} gameStatus={gameStatus} />
+          </Col>
+        )}
         <Col span={24}>
           <Button type="primary" onClick={onNewGameClick}>
             New Game
@@ -182,7 +199,11 @@ const App = () => {
                     <div
                       style={{
                         color:
-                          player.answerStatus === "CORRECT" ? "green" : "red",
+                          player.answerStatus === "CORRECT"
+                            ? "green"
+                            : player.answerStatus === "INCORRECT"
+                            ? "red"
+                            : "black",
                       }}
                     >
                       <Space>
@@ -225,7 +246,7 @@ const App = () => {
                           &nbsp;
                         </Button>
                         <div>
-                          {player.name || player.id}: {player.time}
+                          {player.name || player.id}: {player.time}s
                         </div>
                       </Space>
                     </div>
