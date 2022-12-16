@@ -16,7 +16,6 @@ const Clock: FC<ClockProps> = ({ initialTime, gameStatus }) => {
   useEffect(() => {
     let timer: number
     if (gameStatus === "STARTED") {
-      // setInitialTime(new Date(new Date().getTime() + 6000))
       timer = setInterval(() => {
         const t = new Date()
         const diff = (initialTime.getTime() - t.getTime()) / 1000

@@ -1,5 +1,5 @@
-import { useEffect, useState, FC } from "react"
-import { Input, Row, Col, Button, Space, message } from "antd"
+import { useState, FC } from "react"
+import { Row, Col, Button, Space, message } from "antd"
 // local imports
 import usePeer from "../../hooks/usePeer"
 import { Container } from "../common"
@@ -11,6 +11,7 @@ import {
 } from "./ViewGame.styled"
 import { Player } from "./components"
 import { Clock } from "../."
+import { sorterByTime } from "../../utils/constant"
 
 const ViewGame: FC = () => {
   const { setRemoteId, gameStatus, players, initialTime } = usePeer(() => {
@@ -20,13 +21,13 @@ const ViewGame: FC = () => {
   // states
   const [gameId, setGameId] = useState<string | undefined>(undefined)
 
-  const correctPlayers = players.filter(
-    (player) => player.answerStatus === "CORRECT"
-  )
+  const correctPlayers = players
+    .filter((player) => player.answerStatus === "CORRECT")
+    .sort(sorterByTime)
 
-  const inCorrectPlayers = players.filter(
-    (player) => player.answerStatus === "INCORRECT"
-  )
+  const inCorrectPlayers = players
+    .filter((player) => player.answerStatus === "INCORRECT")
+    .sort(sorterByTime)
 
   // effects
 

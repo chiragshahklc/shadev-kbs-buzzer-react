@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
   Button,
   Row,
@@ -14,9 +14,10 @@ import {
 import { CopyOutlined, SyncOutlined } from "@ant-design/icons"
 // local imports
 import { Container } from "./components/common"
-import { Player, GameStatus, Game } from "./types"
+import { Player } from "./types"
 import usePeer from "./hooks/usePeer"
 import { Clock } from "./components"
+import { CLOCK_TIME } from "./utils/constant"
 
 const ROW_GUTTER: [number, number] = [16, 16]
 const totalPlayersOptions: CheckboxOptionType[] = new Array(10)
@@ -67,7 +68,7 @@ const App = () => {
 
   const onStartClick = () => {
     setGameStatus("STARTED")
-    setInitialTime(new Date(new Date().getTime() + 6000))
+    setInitialTime(new Date(new Date().getTime() + CLOCK_TIME))
   }
 
   const onSyncClick = () => syncGame()
@@ -174,7 +175,7 @@ const App = () => {
                       return {
                         ...p,
                         time: (
-                          6 -
+                          CLOCK_TIME / 1000 -
                           (initialTime.getTime() - new Date().getTime()) / 1000
                         ).toFixed(3),
                       }
